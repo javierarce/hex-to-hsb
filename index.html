@@ -81,7 +81,7 @@
           lum_steps
         };
 
-        const str = JSON.stringify(`hue_steps = [${result.hue_steps}]`) + ',\n' + JSON.stringify(`sat_steps = [${result.sat_steps}]`) + ',\n' + JSON.stringify(`lum_steps = [${result.lum_steps}]`) + ',';
+        const str = JSON.stringify(`hue_steps: [${result.hue_steps}]`) + ',\n' + JSON.stringify(`sat_steps: [${result.sat_steps}]`) + ',\n' + JSON.stringify(`lum_steps: [${result.lum_steps}]`) + ',';
         $result.value = str.replace(/"/g, '');
         $result.classList.remove('is-hidden');
 
