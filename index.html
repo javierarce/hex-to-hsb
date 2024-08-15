@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <script>
+    function hexToHSB(hex) {
+      // Remove the hash if it exists
+      hex = hex.replace(/^#/, '');
+
+      // Parse the hex string to RGB values
+      const r = parseInt(hex.substring(0, 2), 16) / 255;
+      const g = parseInt(hex.substring(2, 4), 16) / 255;
+      const b = parseInt(hex.substring(4, 6), 16) / 255;
+
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const diff = max - min;
+
+      let h, s, v;
+
+      // Calculate brightness (value)
+      v = max * 100;
+
+      // Calculate saturation
+      s = max === 0 ? 0 : (diff / max) * 100;
+
+      // Calculate hue
+      if (max === min) {
+        h = 0; // achromatic
+      } else {
+        switch (max) {
+          case r:
+            h = (g - b) / diff + (g < b ? 6 : 0);
+            break;
+          case g:
+            h = (b - r) / diff + 2;
+            break;
+          case b:
+            h = (r - g) / diff + 4;
+            break;
+        }
+        h /= 6;
+      }
+
+      // Convert hue to degrees
+      h *= 360;
+
+      // Round values to 2 decimal places
+      return {
+        h: Math.round(h * 100) / 100,
+        s: Math.round(s * 100) / 100,
+        b: Math.round(v * 100) / 100
+      };
+    }
+
+    window.onload = function () {
+      const form = document.querySelector('form');
+      const $colors = document.querySelector('#colors');
+      const $result = document.querySelector('#result');
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        let hue_steps = [], lum_steps = [], sat_steps = [];
+
+        const colors = $colors.value.split(',')
+
+        for (let i = 0; i < colors.length; i++) {
+          const c = hexToHSB(colors[i].trim())
+          hue_steps.push(c.h);
+          sat_steps.push(c.s);
+          lum_steps.push(c.b);
+        }
+
+        const result = {
+          hue_steps,
+          sat_steps,
+          lum_steps
+        };
+
+        const str = JSON.stringify(`hue_steps = [${result.hue_steps}]`) + ',\n' + JSON.stringify(`sat_steps = [${result.sat_steps}]`) + ',\n' + JSON.stringify(`lum_steps = [${result.lum_steps}]`) + ',';
+        $result.value = str.replace(/"/g, '');
+        $result.classList.remove('is-hidden');
+
+      });
+    };
+
+  </script>
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <form>
+    <textarea id="colors" name="colors" rows="1" cols="10"
+      placeholder="#FBFCFE, #F7F8FE, #D6DDF9, #ADBAF3,…"></textarea>
+    <textarea id="result" name="result" rows="1" cols="10" class="is-hidden"></textarea>
+    <button type="submit">Convert to HSB</button>
+  </form>
+
+</body>
+
+</html>
